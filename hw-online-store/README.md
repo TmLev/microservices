@@ -1,4 +1,4 @@
-# Online store
+# Online Store
 
 ## General
 
