@@ -6,12 +6,34 @@
 	},
 	"item": [
 		{
+			"name": "0.0.0.0:8000/api/populate",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/populate",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"populate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "0.0.0.0:8000/api/product?code=d6e92931-cd1d-40fd-acb7-4aed738c4e4d",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "0.0.0.0:8000/api/product?code=d6e92931-cd1d-40fd-acb7-4aed738c4e4d",
+					"raw": "0.0.0.0:8000/api/product?code=5f6cf66c-a4e6-4b91-a6b4-7ff8444c3792",
 					"host": [
 						"0",
 						"0",
@@ -26,7 +48,7 @@
 					"query": [
 						{
 							"key": "code",
-							"value": "d6e92931-cd1d-40fd-acb7-4aed738c4e4d"
+							"value": "5f6cf66c-a4e6-4b91-a6b4-7ff8444c3792"
 						}
 					]
 				}
@@ -39,7 +61,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "0.0.0.0:8000/api/products?page_size=2&page=2",
+					"raw": "0.0.0.0:8000/api/products?page_size=4&page=2",
 					"host": [
 						"0",
 						"0",
@@ -54,7 +76,7 @@
 					"query": [
 						{
 							"key": "page_size",
-							"value": "2"
+							"value": "4"
 						},
 						{
 							"key": "page",
@@ -71,7 +93,7 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "0.0.0.0:8000/api/product?title=aaaa&category=",
+					"raw": "0.0.0.0:8000/api/product?title=window&category=furniture",
 					"host": [
 						"0",
 						"0",
@@ -86,11 +108,11 @@
 					"query": [
 						{
 							"key": "title",
-							"value": "aaaa"
+							"value": "window"
 						},
 						{
 							"key": "category",
-							"value": ""
+							"value": "furniture"
 						}
 					]
 				}
@@ -139,7 +161,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "0.0.0.0:8000/api/product?code=95614205-caff-4f47-915f-74a9b999349a",
+					"raw": "0.0.0.0:8000/api/product?code=0cbdd9d7-16f5-4e6d-95a6-a0764d5ecc15",
 					"host": [
 						"0",
 						"0",
@@ -154,7 +176,7 @@
 					"query": [
 						{
 							"key": "code",
-							"value": "95614205-caff-4f47-915f-74a9b999349a"
+							"value": "0cbdd9d7-16f5-4e6d-95a6-a0764d5ecc15"
 						}
 					]
 				}
