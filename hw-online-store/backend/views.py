@@ -83,7 +83,7 @@ class ProductView(APIView):
         product.save()
 
         return Response(
-            data="Product info was edited succesfully.",
+            data="Product info was edited successfully.",
             status=HTTP_200_OK,
         )
 
