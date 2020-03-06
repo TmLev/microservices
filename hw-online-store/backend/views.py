@@ -154,7 +154,7 @@ def products(
     :return: response with page of products
     """
 
-    page_size = 5
+    page_size = 2
     page = 1
 
     if "page_size" in request.query_params:
@@ -171,7 +171,7 @@ def products(
     if "page" in request.query_params:
         try:
             page: int = int(request.query_params.get("page"))
-            if page <= 0 or page > Product.objects.count() / page_size:
+            if page <= 0 or page > max(Product.objects.count() / page_size, 1):
                 raise ValueError
         except (ValueError, TypeError):
             return Response(
@@ -185,5 +185,38 @@ def products(
              .order_by("title")
              .values("title", "category", "code")
              [page_size * (page - 1): page_size * page],
+        status=HTTP_200_OK,
+    )
+
+
+@api_view(["PUT"])
+def populate(
+    request: Request,
+) -> Response:
+    """
+    Populate database with fake products.
+    :param request: empty request
+    :return: response whether request is successful
+    """
+
+    for title, category in [
+        ("fork", "cutlery"),
+        ("lexus", "cars"),
+        ("house", "realty"),
+        ("notebook", "books"),
+        ("bible", "books"),
+        ("mug", "cutlery"),
+        ("phone", "electronics"),
+        ("door", "furniture"),
+        ("chair", "furniture")
+    ]:
+        product, _ = Product.objects.get_or_create(
+            title=title,
+            category=category,
+        )
+        product.save()
+
+    return Response(
+        data="Database populated successfully.",
         status=HTTP_200_OK,
     )

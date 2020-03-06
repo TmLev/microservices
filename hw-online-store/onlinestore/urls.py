@@ -1,6 +1,7 @@
 # coding=utf-8
 
-"""onlinestore URL Configuration
+"""
+onlinestore URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -22,6 +23,7 @@ from django.urls import path
 from backend.views import (
     ProductView,
     products,
+    populate,
 )
 
 
@@ -29,5 +31,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api/product', ProductView.as_view()),
-    path('api/products', products)
+    path('api/products', products),
+    path('api/populate', populate),
 ]
