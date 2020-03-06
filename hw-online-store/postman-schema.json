@@ -1,0 +1,166 @@
+{
+	"info": {
+		"_postman_id": "d2699f8e-8e5d-4746-98b6-6229ca978ca9",
+		"name": "online-store/hw-123",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0.0.0.0:8000/api/product?code=d6e92931-cd1d-40fd-acb7-4aed738c4e4d",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/product?code=d6e92931-cd1d-40fd-acb7-4aed738c4e4d",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"product"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "d6e92931-cd1d-40fd-acb7-4aed738c4e4d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "0.0.0.0:8000/api/products?page_size=2&page=2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/products?page_size=2&page=2",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "page_size",
+							"value": "2"
+						},
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "0.0.0.0:8000/api/product?title=aaaa&category=",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/product?title=aaaa&category=",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"product"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "aaaa"
+						},
+						{
+							"key": "category",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "0.0.0.0:8000/api/product?code=4aa7dedd-a498-429d-bdc8-d06ad0d8e5c6&title=fork 321&category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/product?code=4aa7dedd-a498-429d-bdc8-d06ad0d8e5c6&title=fork 321&category",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"product"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "4aa7dedd-a498-429d-bdc8-d06ad0d8e5c6"
+						},
+						{
+							"key": "title",
+							"value": "fork 321"
+						},
+						{
+							"key": "category",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "0.0.0.0:8000/api/product?code=95614205-caff-4f47-915f-74a9b999349a",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/product?code=95614205-caff-4f47-915f-74a9b999349a",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"product"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "95614205-caff-4f47-915f-74a9b999349a"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
