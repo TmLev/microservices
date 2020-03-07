@@ -61,7 +61,6 @@ class ProductView(APIView):
         """
 
         code_from_query: str = request.query_params.get("code", "")
-        print(code_from_query)
         try:
             code: uuid.UUID = uuid.UUID(code_from_query)
             product: Product = Product.get_by_code(code)
@@ -73,7 +72,6 @@ class ProductView(APIView):
 
         title: str = request.query_params.get("title")
         if title:
-            print("TITLE", title)
             product.title = title
 
         category: str = request.query_params.get("category")
