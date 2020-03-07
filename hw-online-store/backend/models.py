@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import uuid
 
+import typing as tp
+
 from django.db import models
 
 
@@ -43,7 +45,9 @@ class Product(models.Model):
         product: Product = Product.get_by_code(code)
         product.delete()
 
-    def to_dict(self):
+    def to_dict(
+        self,
+    ) -> tp.Dict[str, tp.Any]:
         return {
             "title":    self.title,
             "category": self.category,
@@ -56,5 +60,7 @@ class Product(models.Model):
         verbose_name_plural = "Products"
 
 
-    def __str__(self):
+    def __str__(
+        self
+    ) -> str:
         return self.title
