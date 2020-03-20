@@ -2,11 +2,12 @@
 
 import uuid
 
+from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
@@ -14,16 +15,13 @@ from rest_framework.status import (
 )
 
 from backend.models import Product
+from backend.serializers import ProductSerializer
 
 
 class ProductView(APIView):
     """
-    ProductView provides handlers for different methods on single product
+    ProductView provides handlers for different methods on single product.
     """
-
-    parser_classes = [
-        JSONParser,
-    ]
 
     def get(
         self,
@@ -31,22 +29,30 @@ class ProductView(APIView):
     ) -> Response:
         """
         Get info about product by its code.
-        :param request: request with "code" field
-        :return: response whether request is successful
+        :param request: request with "code" field.
+        :return: response whether request is successful with info about product.
         """
 
-        code_from_query: str = request.query_params.get("code", "")
+        code_from_query: str = request.data.get("code")
+
         try:
             code: uuid.UUID = uuid.UUID(code_from_query)
             product: Product = Product.get_by_code(code)
         except (ValueError, TypeError, Product.DoesNotExist):
             return Response(
-                data="No product with such code.",
+                data={
+                    "message": "No product with such code.",
+                },
                 status=HTTP_404_NOT_FOUND,
             )
 
+        serializer = ProductSerializer(
+            product,
+            many=False,
+        )
+
         return Response(
-            data=product.to_dict(),
+            data=serializer.data,
             status=HTTP_200_OK,
         )
 
@@ -56,32 +62,37 @@ class ProductView(APIView):
     ) -> Response:
         """
         Edit product info.
-        :param request: request with "code" and optional "title" and "category" fields
-        :return: response whether request is successful
+        :param request: request with "code" and optional "title" and "category" fields.
+        :return: response whether request is successful.
         """
 
-        code_from_query: str = request.query_params.get("code", "")
+        code_from_query: str = request.data.get("code")
+
         try:
             code: uuid.UUID = uuid.UUID(code_from_query)
             product: Product = Product.get_by_code(code)
         except (ValueError, TypeError, Product.DoesNotExist):
             return Response(
-                data="No product with such code.",
+                data={
+                    "message": "No product with such code."
+                },
                 status=HTTP_404_NOT_FOUND,
             )
 
-        title: str = request.query_params.get("title")
+        title: str = request.data.get("title")
         if title:
             product.title = title
 
-        category: str = request.query_params.get("category")
+        category: str = request.data.get("category")
         if category is not None:
             product.category = category
 
         product.save()
 
         return Response(
-            data="Product info was edited successfully.",
+            data={
+                "message": "Product info was edited successfully.",
+            },
             status=HTTP_200_OK,
         )
 
@@ -91,18 +102,20 @@ class ProductView(APIView):
     ) -> Response:
         """
         Create new product.
-        :param request: request with "title" and optional "category" fields
-        :return: response whether request is successful
+        :param request: request with "title" and optional "category" string fields.
+        :return: response whether request is successful.
         """
 
-        title: str = request.query_params.get("title", "")
+        title: str = request.data.get("title")
         if not title:
             return Response(
-                data="Title must not be empty.",
+                data={
+                    "message": "Title must not be empty.",
+                },
                 status=HTTP_400_BAD_REQUEST,
             )
 
-        category: str = request.data.get("category", "")
+        category: str = request.data.get("category")
 
         code = Product.create(
             title=title,
@@ -122,69 +135,44 @@ class ProductView(APIView):
     ) -> Response:
         """
         Delete product by its code.
-        :param request: request with "code" field
-        :return: response whether request is successful
+        :param request: request with "code" field (must be string).
+        :return: response whether request is successful.
         """
 
-        code_from_query: str = request.query_params.get("code")
+        code_from_query: str = request.data.get("code")
         try:
             code: uuid.UUID = uuid.UUID(code_from_query)
             Product.delete_by_code(code)
         except (TypeError, ValueError, Product.DoesNotExist):
             return Response(
-                data="No product with such code.",
+                data={
+                    "message": "No product with such code.",
+                },
                 status=HTTP_404_NOT_FOUND,
             )
 
         return Response(
-            data="Product was deleted successfully.",
+            data={
+                "message": "Product was deleted successfully.",
+            },
             status=HTTP_200_OK,
         )
 
 
-@api_view(["GET"])
-def products(
-    request: Request,
-) -> Response:
+class ListProductView(ListAPIView):
     """
-    Show multiple products. Pagination included.
-    :param request: request with optional "page" and "page_size" fields
-    :return: response with page of products
+    List view for multiple products.
     """
 
-    page_size = 2
-    page = 1
 
-    if "page_size" in request.query_params:
-        try:
-            page_size: int = int(request.query_params.get("page_size"))
-            if page_size <= 0:
-                raise ValueError
-        except (ValueError, TypeError):
-            return Response(
-                data="Incorrect page size.",
-                status=HTTP_400_BAD_REQUEST,
-            )
+    class Pagination(PageNumberPagination):
+        page_size_query_param = "page_size"
+        page_size = 5
 
-    if "page" in request.query_params:
-        try:
-            page: int = int(request.query_params.get("page"))
-            if page <= 0 or page > max(Product.objects.count() / page_size, 1):
-                raise ValueError
-        except (ValueError, TypeError):
-            return Response(
-                data="Incorrect page.",
-                status=HTTP_400_BAD_REQUEST,
-            )
 
-    return Response(
-        data=Product
-             .objects
-             .order_by("title")
-             .values("title", "category", "code")
-             [page_size * (page - 1): page_size * page],
-        status=HTTP_200_OK,
-    )
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = Pagination
 
 
 @api_view(["PUT"])
@@ -215,6 +203,8 @@ def populate(
         product.save()
 
     return Response(
-        data="Database populated successfully.",
+        data={
+            "message": "Database populated successfully.",
+        },
         status=HTTP_200_OK,
     )
