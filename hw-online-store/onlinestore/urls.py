@@ -22,7 +22,7 @@ from django.urls import path
 
 from backend.views import (
     ProductView,
-    products,
+    ListProductView,
     populate,
 )
 
@@ -31,6 +31,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api/product', ProductView.as_view()),
-    path('api/products', products),
+    path('api/products', ListProductView.as_view()),
     path('api/populate', populate),
 ]
