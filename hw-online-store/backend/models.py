@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import uuid
 
-import typing as tp
-
 from django.db import models
 
 
@@ -44,15 +42,6 @@ class Product(models.Model):
     ) -> None:
         product: Product = Product.get_by_code(code)
         product.delete()
-
-    def to_dict(
-        self,
-    ) -> tp.Dict[str, tp.Any]:
-        return {
-            "title":    self.title,
-            "category": self.category,
-            "code":     self.code,
-        }
 
 
     class Meta:
