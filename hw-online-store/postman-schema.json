@@ -28,34 +28,6 @@
 			"response": []
 		},
 		{
-			"name": "0.0.0.0:8000/api/product?code=d6e92931-cd1d-40fd-acb7-4aed738c4e4d",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "0.0.0.0:8000/api/product?code=5f6cf66c-a4e6-4b91-a6b4-7ff8444c3792",
-					"host": [
-						"0",
-						"0",
-						"0",
-						"0"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"product"
-					],
-					"query": [
-						{
-							"key": "code",
-							"value": "5f6cf66c-a4e6-4b91-a6b4-7ff8444c3792"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "0.0.0.0:8000/api/products?page_size=2&page=2",
 			"request": {
 				"method": "GET",
@@ -81,6 +53,34 @@
 						{
 							"key": "page",
 							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "0.0.0.0:8000/api/product?code=d6e92931-cd1d-40fd-acb7-4aed738c4e4d",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8000/api/product?code=5f6cf66c-a4e6-4b91-a6b4-7ff8444c3792",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"product"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "5f6cf66c-a4e6-4b91-a6b4-7ff8444c3792"
 						}
 					]
 				}
