@@ -20,17 +20,30 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from rest_framework_simplejwt.views import TokenRefreshView
+
 from backend.views import (
     ProductView,
     ListProductView,
     populate,
 )
 
+from jwt_auth.views import (
+    register_user,
+    CustomTokenObtainPairView,
+    CustomTokenVerifyView,
+)
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 
-    path('api/product', ProductView.as_view()),
-    path('api/products', ListProductView.as_view()),
-    path('api/populate', populate),
+    path("api/product", ProductView.as_view()),
+    path("api/products", ListProductView.as_view()),
+    path("api/populate", populate),
+
+    path("api/register_user", register_user),
+    path("api/authorize_user", CustomTokenObtainPairView.as_view()),
+    path("api/refresh_token", TokenRefreshView.as_view()),
+    path("api/verify_token", CustomTokenVerifyView.as_view()),
 ]
