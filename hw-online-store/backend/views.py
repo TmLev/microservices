@@ -34,7 +34,6 @@ class ProductView(APIView):
         """
 
         code_from_query: str = request.data.get("code")
-
         try:
             code: uuid.UUID = uuid.UUID(code_from_query)
             product: Product = Product.get_by_code(code)
@@ -67,7 +66,6 @@ class ProductView(APIView):
         """
 
         code_from_query: str = request.data.get("code")
-
         try:
             code: uuid.UUID = uuid.UUID(code_from_query)
             product: Product = Product.get_by_code(code)
@@ -167,10 +165,10 @@ class ListProductView(ListAPIView):
 
     class Pagination(PageNumberPagination):
         page_size_query_param = "page_size"
-        page_size = 5
+        page_size = 4
 
 
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by("-title")
     serializer_class = ProductSerializer
     pagination_class = Pagination
 
