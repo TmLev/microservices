@@ -1,6 +1,6 @@
-# Online Store
+# Auth Service
 
-## Auth
+## General
 
 В данной ветке представлено решение ДЗ 4, а именно:
 * доступна регистрация пользователей по e-mail и паролю
@@ -13,9 +13,6 @@
 ```bash
 docker-compose up
 ```
-
-## Architecture (from previous HW)
-![](architecture.png)
 
 ## API
 
