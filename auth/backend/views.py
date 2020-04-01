@@ -11,7 +11,11 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import (
+    InvalidToken,
+    TokenError,
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenVerifyView,
@@ -19,6 +23,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from backend.models import Profile
+from backend.utils import message_queue_provider
 
 
 @api_view(["PUT"])
@@ -51,14 +56,61 @@ def register_user(
             status=HTTP_400_BAD_REQUEST,
         )
 
-    Profile.register(
+    user = Profile.register(
         email=email,
         password=password,
     )
 
+    email_token = RefreshToken.for_user(
+        user=user,
+    )
+
+    message_queue_provider.send_confirmation(
+        receipt=email,
+        token=str(email_token),
+    )
+
     return Response(
         data={
-            "message": "User created successfully",
+            "message": "User created successfully, email with confirmation was sent",
+        },
+        status=HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def verify_email(
+    request: Request,
+) -> Response:
+    """
+    Confirm user registration using sent token.
+    :param request: contains confirmation token in query params.
+    :return: response whether request is successful.
+    """
+
+    token = request.query_params.get("token")
+
+    try:
+        payload = RefreshToken(
+            token=token,
+        ).payload
+    except TokenError:
+        return Response(
+            data={
+                "message": "Token is invalid or expired.",
+            },
+            status=HTTP_400_BAD_REQUEST,
+        )
+
+    id_ = int(payload["id"])
+
+    Profile.mark_active(
+        id_=id_,
+    )
+
+    return Response(
+        data={
+            "message": "Email is verified, registration completed."
         },
         status=HTTP_200_OK,
     )
@@ -103,7 +155,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         *args,
         **kwargs,
     ) -> Response:
+        """
+        Do as in docs.
+        """
+
         request.data["username"] = request.data.get("email")
+
         return super().post(request)
 
 

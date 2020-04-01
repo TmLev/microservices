@@ -120,6 +120,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=4),
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=8),
     'ROTATE_REFRESH_TOKENS':  True,
+    'USER_ID_CLAIM':          'id',
 }
 
 # Internationalization
