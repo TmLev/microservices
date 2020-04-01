@@ -6,6 +6,33 @@ services:
     env_file:
       - database/database.env
 
+  mq:
+    image: rabbitmq:management-alpine
+    env_file:
+      - message-queue/message_queue.env
+    ports:
+      - ${MQ_PORT}:${MQ_PORT}
+      - ${MQ_DEV_PORT}:${MQ_DEV_PORT}
+
+
+  notifications:
+    env_file:
+      - notifications/notifications.env
+
+    build:
+      context: notifications
+      dockerfile: Dockerfile
+
+    depends_on:
+      - mq
+
+    ports:
+      - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
+
+    command: >
+      sh -c "utils/wait-for.sh mq:$MQ_PORT -t 0 &&
+             ./notifications"
+
 
   auth:
     env_file:
@@ -17,8 +44,13 @@ services:
       context: auth
       dockerfile: Dockerfile
 
+    depends_on:
+      - db
+      - mq
+
     command: >
-      sh -c "utils/wait-for.sh db:$DB_PORT &&
+      sh -c "utils/wait-for.sh db:$DB_PORT -t 0 &&
+             utils/wait-for.sh mq:$MQ_PORT -t 0 &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$AUTH_PORT"
@@ -39,6 +71,10 @@ services:
     build:
       context: online-store
       dockerfile: Dockerfile
+
+    depends_on:
+      - db
+      - auth
 
     command: >
       sh -c "utils/wait-for.sh auth:$AUTH_PORT &&
