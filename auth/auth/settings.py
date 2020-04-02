@@ -30,9 +30,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = [
-    '0.0.0.0',
-    'auth',
-    'online-store',
+    "*",  # only for SMS confirmation, TODO: remove later
+    # '0.0.0.0',
+    # 'auth',
+    # 'online-store',
 ]
 
 # Application definition
