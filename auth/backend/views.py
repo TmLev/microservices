@@ -23,7 +23,11 @@ from rest_framework_simplejwt.views import (
 )
 
 from backend.models import Profile
-from backend.utils import message_queue_provider
+from backend.utils import (
+    message_queue_provider,
+    get_according_notification_queue,
+    make_confirmation_message,
+)
 
 
 @api_view(["PUT"])
@@ -38,12 +42,13 @@ def register_user(
 
     email: str = request.data.get("email")
     email = BaseUserManager.normalize_email(email).lower()
+    phone_number: str = request.data.get("phone_number", "")
     password: str = request.data.get("password")
 
     if not email or not password:
         return Response(
             data={
-                "message": "No email or password provided"
+                "message": "No email or password provided."
             },
             status=HTTP_400_BAD_REQUEST,
         )
@@ -61,25 +66,35 @@ def register_user(
         password=password,
     )
 
-    email_token = RefreshToken.for_user(
-        user=user,
+    queue = get_according_notification_queue(
+        prefix="sms" if phone_number else "email",
+    )
+
+    body = make_confirmation_message(
+        view=confirm_registration,
+        confirmation_token=RefreshToken.for_user(user),
     )
 
     message_queue_provider.send_confirmation(
-        receipt=email,
-        token=str(email_token),
+        queue=queue,
+        recipient=phone_number if phone_number else email,
+        subject="Registration confirmation",
+        body=body,
     )
+
+    device = "phone" if phone_number else "email address"
 
     return Response(
         data={
-            "message": "User created successfully, email with confirmation was sent",
+            "message": f"User created successfully, "
+                       f"check your {device} for confirmation link.",
         },
         status=HTTP_200_OK,
     )
 
 
 @api_view(["GET"])
-def verify_email(
+def confirm_registration(
     request: Request,
 ) -> Response:
     """
