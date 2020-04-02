@@ -14,9 +14,33 @@ services:
       - ${MQ_PORT}:${MQ_PORT}
       - ${MQ_DEV_PORT}:${MQ_DEV_PORT}
 
+  mail:
+    image: tvial/docker-mailserver:latest
+    hostname: ${MAIL_HOST}
+    domainname: ${MAIL_DOMAIN}
+    env_file:
+      - .env
+      - mail/mail.env
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - ./mail/data:/var/mail
+      - ./mail/state:/var/mail-state
+      - ./mail/logs:/var/log/mail
+      - ./mail/config/:/tmp/docker-mailserver/
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+
 
   notifications:
     env_file:
+      - .env
+      - mail/mail.env
+      - message-queue/message_queue.env
       - notifications/notifications.env
 
     build:
@@ -24,6 +48,7 @@ services:
       dockerfile: Dockerfile
 
     depends_on:
+      - mail
       - mq
 
     ports:
@@ -38,6 +63,7 @@ services:
     env_file:
       - .env
       - database/database.env
+      - notifications/notifications.env
       - auth/auth.env
 
     build:
