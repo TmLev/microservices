@@ -10,12 +10,10 @@
 но, в силу отсутствия каких-либо других версий, явного примера нет
 
 ## Deploying with Docker-Compose
+
 ```bash
 docker-compose up
 ```
-
-## Architecture
-![](architecture.png)
 
 ## API
 
