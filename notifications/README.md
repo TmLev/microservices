@@ -7,7 +7,7 @@
 * отправка писем или SMS с подтверждением регистрации
 * возврат сообщений при неудачной отправке
 
-## Deploying with Docker-Compose
+## Deploying With Docker
 ```bash
 docker-compose up notifications
 ```
