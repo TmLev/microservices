@@ -17,7 +17,6 @@ class Profile(models.Model):
     ) -> User:
         """
         Register new user.
-        TODO: params annotation.
         """
 
         user = User.objects.create_user(
