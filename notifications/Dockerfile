@@ -12,7 +12,7 @@ COPY . .
 RUN go build -o /notifications .
 
 
-# Main container
+# main container
 FROM alpine
 
 RUN    apk update                                \
