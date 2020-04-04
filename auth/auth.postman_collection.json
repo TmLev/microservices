@@ -6,13 +6,13 @@
 	},
 	"item": [
 		{
-			"name": "register user",
+			"name": "register user with email",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\": \"2@g.com\",\n\t\"password\": \"123\"\n}",
+					"raw": "{\n\t\"email\": \"online-store@localhost.com\",\n\t\"password\": \"123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -31,6 +31,66 @@
 					"path": [
 						"api",
 						"register_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register user with phone number",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"online-store@localhost.com\",\n\t\"phone_number\": \"79154500111\",\n\t\"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8002/api/register_user",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"register_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirm_registration",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://0.0.0.0:8002/api/confirm_registration?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTU4NTcwMzQ5NCwianRpIjoiZWNkNzc4NWQ0N2U1NGVkZTg5OTBmMjFlMzA2YjQ0ODQiLCJpZCI6NH0.eJc3Cu71_yCKX6_BYHrZBJPlMBg70svFiIogHsPbtwI",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"confirm_registration"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTU4NTcwMzQ5NCwianRpIjoiZWNkNzc4NWQ0N2U1NGVkZTg5OTBmMjFlMzA2YjQ0ODQiLCJpZCI6NH0.eJc3Cu71_yCKX6_BYHrZBJPlMBg70svFiIogHsPbtwI"
+						}
 					]
 				}
 			},

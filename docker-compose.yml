@@ -6,19 +6,77 @@ services:
     env_file:
       - database/database.env
 
+  mq:
+    image: rabbitmq:management-alpine
+    env_file:
+      - message-queue/message_queue.env
+    ports:
+      - ${MQ_PORT}:${MQ_PORT}
+      - ${MQ_DEV_PORT}:${MQ_DEV_PORT}
+
+  mail:
+    image: tvial/docker-mailserver:latest
+    hostname: ${MAIL_HOST}
+    domainname: ${MAIL_DOMAIN}
+    env_file:
+      - .env
+      - mail/mail.env
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - ./mail/data:/var/mail
+      - ./mail/state:/var/mail-state
+      - ./mail/logs:/var/log/mail
+      - ./mail/config/:/tmp/docker-mailserver/
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+
+
+  notifications:
+    env_file:
+      - .env
+      - mail/mail.env
+      - message-queue/message_queue.env
+      - notifications/notifications.env
+
+    build:
+      context: notifications
+      dockerfile: Dockerfile
+
+    depends_on:
+      - mail
+      - mq
+
+    ports:
+      - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
+
+    command: >
+      sh -c "utils/wait-for.sh mq:$MQ_PORT -t 0 &&
+             ./notifications"
+
 
   auth:
     env_file:
       - .env
       - database/database.env
+      - notifications/notifications.env
       - auth/auth.env
 
     build:
       context: auth
       dockerfile: Dockerfile
 
+    depends_on:
+      - db
+      - mq
+
     command: >
-      sh -c "utils/wait-for.sh db:$DB_PORT &&
+      sh -c "utils/wait-for.sh db:$DB_PORT -t 0 &&
+             utils/wait-for.sh mq:$MQ_PORT -t 0 &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$AUTH_PORT"
@@ -39,6 +97,10 @@ services:
     build:
       context: online-store
       dockerfile: Dockerfile
+
+    depends_on:
+      - db
+      - auth
 
     command: >
       sh -c "utils/wait-for.sh auth:$AUTH_PORT &&

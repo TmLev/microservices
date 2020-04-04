@@ -10,6 +10,7 @@ django = "*"
 djangorestframework-simplejwt = "*"
 psycopg2 = "*"
 markdown = "*"
+pika = "*"
 
 [requires]
 python_version = "3.8"

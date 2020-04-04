@@ -22,6 +22,7 @@ from django.urls import path
 
 from backend.views import (
     register_user,
+    confirm_registration,
     CustomTokenObtainPairView,
     CustomTokenVerifyView,
     CustomTokenRefreshView,
@@ -32,6 +33,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("api/register_user", register_user),
+    path("api/confirm_registration", confirm_registration),
     path("api/authorize_user", CustomTokenObtainPairView.as_view()),
 
     path("api/refresh_token", CustomTokenRefreshView.as_view()),

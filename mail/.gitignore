@@ -1,0 +1,7 @@
+# volumes
+
+config/*
+data/*
+logs/*
+state/*
+

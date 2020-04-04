@@ -30,9 +30,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = [
-    '0.0.0.0',
-    'auth',
-    'online-store',
+    "*",  # only for SMS confirmation, TODO: remove later
+    # '0.0.0.0',
+    # 'auth',
+    # 'online-store',
 ]
 
 # Application definition
@@ -120,6 +121,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=4),
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=8),
     'ROTATE_REFRESH_TOKENS':  True,
+    'USER_ID_CLAIM':          'id',
 }
 
 # Internationalization
