@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "16d46bc3-4574-41fd-a7ef-f993f31cd20c",
+		"name": "auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"2@g.com\",\n\t\"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8002/api/register_user",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"register_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "authorize user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"2@g.com\",\n\t\"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8002/api/authorize_user",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"authorize_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTU4NTY4NDkyMywianRpIjoiMDg1ZGE1YWQ2YzAwNDQzMGIyMDdhY2JhZGYyOThiNzciLCJ1c2VyX2lkIjoxfQ.sS3q4ZJGMPcXLMmpVnOwKe6BpMYtZ7_ynolWwq2sUwc\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8002/api/refresh_token",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"refresh_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"token\": \"eyJ0eXAiOiJKQiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTU4NTY4NDkyMywianRpIjoiMDg1ZGE1YWQ2YzAwNDQzMGIyMDdhY2JhZGYyOThiNzciLCJ1c2VyX2lkIjoxfQ.sS3q4ZJGMPcXLMmpVnOwKe6BpMYtZ7_ynolWwq2sUwc\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8002/api/verify_token",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"verify_token"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    env_file:
+      - database/database.env
+
+
+  auth:
+    env_file:
+      - .env
+      - database/database.env
+      - auth/auth.env
+
+    build:
+      context: auth
+      dockerfile: Dockerfile
+
+    command: >
+      sh -c "utils/wait-for.sh db:$DB_PORT &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:$AUTH_PORT"
+
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+
+    volumes:
+      - ./auth:/auth
+
+
+  online-store:
+    env_file:
+      - .env
+      - database/database.env
+      - online-store/onlinestore.env
+
+    build:
+      context: online-store
+      dockerfile: Dockerfile
+
+    command: >
+      sh -c "utils/wait-for.sh auth:$AUTH_PORT &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:$ONLINE_STORE_PORT"
+
+    ports:
+      - ${ONLINE_STORE_PORT}:${ONLINE_STORE_PORT}
+
+    volumes:
+      - ./online-store:/online-store
