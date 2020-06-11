@@ -17,10 +17,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+import os
+
 from django.contrib import admin
 from django.urls import path
 
 from backend.views import (
+    register_admin,
     register_user,
     confirm_registration,
     CustomTokenObtainPairView,
@@ -32,6 +35,7 @@ from backend.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
 
+    path("api/register_admin", register_admin),
     path("api/register_user", register_user),
     path("api/confirm_registration", confirm_registration),
     path("api/authorize_user", CustomTokenObtainPairView.as_view()),
@@ -39,3 +43,12 @@ urlpatterns = [
     path("api/refresh_token", CustomTokenRefreshView.as_view()),
     path("api/verify_token", CustomTokenVerifyView.as_view()),
 ]
+
+if os.environ.get("AUTH_GRPC_MODE"):
+    import sys
+    sys.path.insert(0, "..")
+
+    from backend.handlers import grpc_handlers as auth_grpc_handlers
+
+    def grpc_handlers(server):
+        auth_grpc_handlers(server)
