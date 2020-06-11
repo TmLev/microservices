@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package auth;
+
+service Auth {
+  rpc Verify(Token) returns (Profile);
+}
+
+message Token {
+  string token = 1;
+}
+
+message Profile {
+  bool has_valid_token = 1;
+  int64 id = 2;
+  Role role = 3;
+}
+
+enum Role {
+  User = 0;
+  Admin = 1;
+}
