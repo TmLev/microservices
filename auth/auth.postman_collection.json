@@ -6,13 +6,54 @@
 	},
 	"item": [
 		{
+			"name": "register admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTkxODgwNDE5LCJqdGkiOiJmYTgxNjE3NTQwMmI0ZGRjOWRjM2Y5ODYxN2Y5NzEyNCIsImlkIjoxfQ.VU-zlYDF7F2f0ozl78JnhsClwKoy6N4IN_pHtl6KPks",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"new-admin\",\n\t\"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8002/api/register_admin",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"register_admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "register user with email",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\": \"online-store@localhost.com\",\n\t\"password\": \"123\"\n}",
+					"raw": "{\n\t\"email\": \"user\",\n\t\"password\": \"123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -103,7 +144,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\": \"2@g.com\",\n\t\"password\": \"123\"\n}",
+					"raw": "{\n\t\"email\": \"online-store@localhost.com\",\n\t\"password\": \"123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "django_grpc_framework",
 ]
 
 MIDDLEWARE = [
@@ -118,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # JWT Auth
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=4),
+    'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=20),
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=8),
     'ROTATE_REFRESH_TOKENS':  True,
     'USER_ID_CLAIM':          'id',

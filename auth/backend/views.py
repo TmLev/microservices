@@ -8,10 +8,15 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_200_OK,
+    HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
 )
 
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import (
+    AccessToken,
+    RefreshToken,
+)
 from rest_framework_simplejwt.exceptions import (
     InvalidToken,
     TokenError,
@@ -21,6 +26,8 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
     TokenRefreshView,
 )
+
+from api.proto.auth_pb2 import Admin
 
 from backend.models import Profile
 from backend.utils import (
@@ -90,6 +97,66 @@ def register_user(
                        f"check your {device} for confirmation link.",
         },
         status=HTTP_200_OK,
+    )
+
+
+@api_view(["PUT"])
+def register_admin(
+    request: Request,
+) -> Response:
+    """
+    Register new admin.
+    :param request: contains email and password with admin token in header.
+    :return: response whether request is successful.
+    """
+
+    token_from_request = request.META.get("HTTP_AUTHORIZATION", "").split("Bearer ")[-1]
+
+    try:
+        token = AccessToken(token_from_request)
+        profile = Profile.objects.get(user_id=token["id"])
+        if profile.role != Admin:
+            raise PermissionError
+    except (TokenError, PermissionError):
+        return Response(
+            data={
+                "message": "Invalid credentials.",
+            },
+            status=HTTP_401_UNAUTHORIZED,
+        )
+
+    email: str = request.data.get("email")
+    email = BaseUserManager.normalize_email(email).lower()
+    password: str = request.data.get("password")
+
+    if not email or not password:
+        return Response(
+            data={
+                "message": "No email or password provided."
+            },
+            status=HTTP_400_BAD_REQUEST,
+        )
+
+    if Profile.exists(email):
+        return Response(
+            data={
+                "message": "User with such email already exists."
+            },
+            status=HTTP_400_BAD_REQUEST,
+        )
+
+    Profile.register(
+        email=email,
+        password=password,
+        role=Admin,
+        is_active=True,
+    )
+
+    return Response(
+        data={
+            "message": "Admin created successfully.",
+        },
+        status=HTTP_201_CREATED,
     )
 
 

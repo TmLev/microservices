@@ -10,9 +10,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /online-store
 
 # install dependencies using cache for faster build
-COPY Pipfile Pipfile
-COPY Pipfile.lock Pipfile.lock
+COPY online-store/Pipfile Pipfile
+COPY online-store/Pipfile.lock Pipfile.lock
 RUN pipenv install --system --deploy
 
 # copy everything else
-ADD . .
+ADD online-store .
+
+# and grpc api
+COPY api api

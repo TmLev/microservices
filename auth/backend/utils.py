@@ -18,7 +18,7 @@ class MessageQueueProvider:
 
     def __init__(
         self,
-    ):
+    ) -> None:
         self.connection_ = None
         return
 
@@ -34,7 +34,7 @@ class MessageQueueProvider:
             self.connection_ = pika.BlockingConnection(
                 parameters=pika.ConnectionParameters(
                     host=os.environ.get("MQ_HOST"),
-                    port=os.environ.get("MQ_PORT"),
+                    port=int(os.environ.get("MQ_PORT")),
                     heartbeat=None,
                 )
             )
@@ -96,8 +96,6 @@ def get_according_notification_queue(
 
     notification_queues: tp.List[str] = os.environ.get("NOTIFICATION_QUEUES").split(",")
 
-    print(notification_queues)
-
     for queue in notification_queues:
         if queue.startswith(prefix):
             return queue
@@ -106,4 +104,4 @@ def get_according_notification_queue(
 
 
 def get_local_network_ip():
-    return "http://192.168.1.68"
+    return "http://192.168.1.71"
