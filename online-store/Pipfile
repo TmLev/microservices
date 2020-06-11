@@ -12,6 +12,9 @@ djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
 requests = "*"
+grpcio = "*"
+grpcio-tools = "*"
+djangogrpcframework = "*"
 
 [requires]
 python_version = "3.8"

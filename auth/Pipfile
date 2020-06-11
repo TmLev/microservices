@@ -11,6 +11,9 @@ djangorestframework-simplejwt = "*"
 psycopg2 = "*"
 markdown = "*"
 pika = "*"
+grpcio-tools = "*"
+grpcio = "*"
+djangogrpcframework = "*"
 
 [requires]
 python_version = "3.8"
