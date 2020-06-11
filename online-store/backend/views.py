@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import requests
+import grpc
 import os
 
 from rest_framework.decorators import api_view
@@ -16,29 +16,50 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
 )
 
+from api.proto.auth_pb2_grpc import AuthStub
+from api.proto.auth_pb2 import (
+    Admin,
+    Profile,
+    Token,
+)
+
 from backend.models import Product
 from backend.serializers import ProductSerializer
 
 
-def is_token_valid(
+INVALID_CREDENTIALS = Response(
+    data={
+        "message": "Invalid credentials."
+    },
+    status=HTTP_401_UNAUTHORIZED,
+)
+PRODUCT_NOT_FOUND = Response(
+    data={
+        "message": "No product with such id.",
+    },
+    status=HTTP_404_NOT_FOUND,
+)
+
+
+def get_profile_by_token(
     request: Request,
-) -> bool:
+) -> Profile:
     """
-    Validate authorization token using another service.
-    :param request: request with header with token.
-    :return: is token valid or not.
+    Get profile associated with token from request.
+    :param request: request with token in header.
+    :return: profile (from gRPC specification).
     """
 
-    token = request.META.get("HTTP_AUTHORIZATION", "").split("Bearer ")[-1]
+    token_from_request = request.META.get("HTTP_AUTHORIZATION", "").split("Bearer ")[-1]
 
-    token_response: requests.Response = requests.post(
-        url="http://auth:" + os.environ.get("AUTH_PORT") + "/api/verify_token",
-        data={
-            "token": token,
-        },
-    )
+    auth_grpc = os.environ.get("AUTH_GRPC_HOST") + ":" + os.environ.get("AUTH_GRPC_PORT")
 
-    return token_response.status_code == HTTP_200_OK
+    with grpc.insecure_channel(auth_grpc) as channel:
+        stub = AuthStub(channel)
+        token = Token(token=token_from_request)
+        profile = stub.Verify(token)
+
+    return profile
 
 
 class ProductView(APIView):
@@ -56,17 +77,17 @@ class ProductView(APIView):
         :return: response whether request is successful with info about product.
         """
 
+        profile: Profile = get_profile_by_token(request)
+
+        if not profile.has_valid_token:
+            return INVALID_CREDENTIALS
+
         id_from_query: str = request.query_params.get("id")
         try:
             id_: int = int(id_from_query)
             product: Product = Product.get_by_id(id_)
         except (ValueError, TypeError, Product.DoesNotExist):
-            return Response(
-                data={
-                    "message": "No product with such id.",
-                },
-                status=HTTP_404_NOT_FOUND,
-            )
+            return PRODUCT_NOT_FOUND
 
         serializer = ProductSerializer(
             product,
@@ -88,25 +109,17 @@ class ProductView(APIView):
         :return: response whether request is successful.
         """
 
-        if not is_token_valid(request):
-            return Response(
-                data={
-                    "message": "Invalid credentials."
-                },
-                status=HTTP_401_UNAUTHORIZED,
-            )
+        profile: Profile = get_profile_by_token(request)
+
+        if not profile.has_valid_token or profile.role != Admin:
+            return INVALID_CREDENTIALS
 
         id_from_query: str = request.data.get("id")
         try:
             id_: int = int(id_from_query)
             product: Product = Product.get_by_id(id_)
         except (ValueError, TypeError, Product.DoesNotExist):
-            return Response(
-                data={
-                    "message": "No product with such id."
-                },
-                status=HTTP_404_NOT_FOUND,
-            )
+            return PRODUCT_NOT_FOUND
 
         title: str = request.data.get("title")
         if title:
@@ -135,13 +148,10 @@ class ProductView(APIView):
         :return: response whether request is successful.
         """
 
-        if not is_token_valid(request):
-            return Response(
-                data={
-                    "message": "Invalid credentials."
-                },
-                status=HTTP_401_UNAUTHORIZED,
-            )
+        profile: Profile = get_profile_by_token(request)
+
+        if not profile.has_valid_token or profile.role != Admin:
+            return INVALID_CREDENTIALS
 
         title: str = request.data.get("title")
         if not title:
@@ -176,25 +186,17 @@ class ProductView(APIView):
         :return: response whether request is successful.
         """
 
-        if not is_token_valid(request):
-            return Response(
-                data={
-                    "message": "Invalid credentials."
-                },
-                status=HTTP_401_UNAUTHORIZED,
-            )
+        profile: Profile = get_profile_by_token(request)
+
+        if not profile.has_valid_token or profile.role != Admin:
+            return INVALID_CREDENTIALS
 
         id_from_query: str = request.data.get("id")
         try:
             id_: int = int(id_from_query)
             Product.delete_by_id(id_)
         except (TypeError, ValueError, Product.DoesNotExist):
-            return Response(
-                data={
-                    "message": "No product with such id.",
-                },
-                status=HTTP_404_NOT_FOUND,
-            )
+            return PRODUCT_NOT_FOUND
 
         return Response(
             data={
