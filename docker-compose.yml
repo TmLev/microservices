@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   db:
@@ -35,29 +35,23 @@ services:
       - NET_ADMIN
       - SYS_PTRACE
 
-
   notifications:
     env_file:
       - .env
       - mail/mail.env
       - message-queue/message_queue.env
       - notifications/notifications.env
-
     build:
       context: notifications
       dockerfile: Dockerfile
-
     depends_on:
       - mail
       - mq
-
     ports:
       - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
-
     command: >
       sh -c "utils/wait-for.sh mq:$MQ_PORT -t 0 &&
              ./notifications"
-
 
   auth:
     env_file:
@@ -65,51 +59,58 @@ services:
       - database/database.env
       - notifications/notifications.env
       - auth/auth.env
-
     build:
-      context: auth
-      dockerfile: Dockerfile
-
+      context: .
+      dockerfile: auth/Dockerfile
     depends_on:
       - db
       - mq
-
     command: >
       sh -c "utils/wait-for.sh db:$DB_PORT -t 0 &&
              utils/wait-for.sh mq:$MQ_PORT -t 0 &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$AUTH_PORT"
-
     ports:
       - ${AUTH_PORT}:${AUTH_PORT}
 
-    volumes:
-      - ./auth:/auth
-
+  auth-grpc:
+    env_file:
+      - .env
+      - database/database.env
+      - auth/auth.env
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
+    depends_on:
+      - db
+    environment:
+      - AUTH_GRPC_MODE=1
+    # TODO(TmLev): remove --dev after debugging
+    command: >
+      sh -c "utils/wait-for.sh db:$DB_PORT -t 0 &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py grpcrunserver --dev 0.0.0.0:$AUTH_GRPC_PORT"
+    ports:
+      - ${AUTH_GRPC_PORT}:${AUTH_GRPC_PORT}
 
   online-store:
     env_file:
       - .env
       - database/database.env
       - online-store/onlinestore.env
-
     build:
-      context: online-store
-      dockerfile: Dockerfile
-
+      context: .
+      dockerfile: online-store/Dockerfile
     depends_on:
       - db
       - auth
-
+      - auth-grpc
     command: >
       sh -c "utils/wait-for.sh auth:$AUTH_PORT &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$ONLINE_STORE_PORT"
-
     ports:
       - ${ONLINE_STORE_PORT}:${ONLINE_STORE_PORT}
-
-    volumes:
-      - ./online-store:/online-store
