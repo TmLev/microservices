@@ -12,21 +12,22 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!9rvu5ig08e9fgm&*_!#^^11o9t(ha%e)fy^fo46sx^ixhva@x'
+SECRET_KEY = "!9rvu5ig08e9fgm&*_!#^^11o9t(ha%e)fy^fo46sx^ixhva@x"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    "0.0.0.0",
+]
 
 # Application definition
 
@@ -37,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    "backend",
+
+    "django_q",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -53,10 +59,10 @@ ROOT_URLCONF = 'import.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'BACKEND':  'django.template.backends.django.DjangoTemplates',
+        'DIRS':     [],
         'APP_DIRS': True,
-        'OPTIONS': {
+        'OPTIONS':  {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -69,17 +75,39 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'import.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE':   os.environ.get('DB_ENGINE'),
+        'NAME':     os.environ.get('POSTGRES_DB'),
+        'USER':     os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST':     os.environ.get('DB_HOST'),
+        'PORT':     os.environ.get('DB_PORT'),
     }
 }
 
+# Q Cluster
+# https://django-q.readthedocs.io/en/latest/configure.html
+
+Q_CLUSTER = {
+    'name':         'upload',
+    'workers':      4,
+    'recycle':      500,
+    'timeout':      60,
+    'compress':     True,
+    'save_limit':   250,
+    'queue_limit':  500,
+    'cpu_affinity': 1,
+    'label':        'Django Q',
+    'redis':        {
+        'host': os.environ.get("REDIS_HOST"),
+        'port': os.environ.get("REDIS_PORT"),
+        'db':   1,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -99,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -112,7 +139,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
