@@ -189,7 +189,7 @@ class ProductView(APIView):
         if not profile.has_valid_token or profile.role != Admin:
             return INVALID_CREDENTIALS
 
-        id_: str = request.data.get("id")
+        id_: str = request.query_params.get("id")
         try:
             Product.delete_by_id(id_)
         except (TypeError, ValueError, Product.DoesNotExist):
