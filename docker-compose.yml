@@ -142,7 +142,7 @@ services:
     ports:
       - ${UPLOAD_PORT}:${UPLOAD_PORT}
     volumes:
-      - ./upload/files:/tmp/files
+      - ./tmpfiles:/tmp/files
 
   upload-q-cluster:
     env_file:
@@ -164,7 +164,27 @@ services:
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py qcluster"
-    ports:
-      - ${UPLOAD_Q_CLUSTER_PORT}:${UPLOAD_Q_CLUSTER_PORT}
     volumes:
-      - ./upload/files:/tmp/files
+      - ./tmpfiles:/tmp/files
+
+  import:
+    env_file:
+      - .env
+      - database/database.env
+      - import/import.env
+    build:
+      context: .
+      dockerfile: import/Dockerfile
+    depends_on:
+      - db
+      - redis
+      - mq
+    command: >
+      sh -c "utils/wait-for.sh $DB_HOST:$DB_PORT &&
+             utils/wait-for.sh $REDIS_HOST:$REDIS_PORT &&
+             utils/wait-for.sh $MQ_HOST:$MQ_PORT &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py qcluster"
+    volumes:
+      - ./tmpfiles:/tmp/files
