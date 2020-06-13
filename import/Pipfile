@@ -6,11 +6,13 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-djangorestframework = "*"
-markdown = "*"
+django = "*"
 django-filter = "*"
 django-q = "*"
+djangorestframework = "*"
+markdown = "*"
 pika = "*"
+psycopg2 = "*"
 redis = "*"
 
 [requires]
