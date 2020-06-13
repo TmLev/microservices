@@ -2,7 +2,6 @@
 
 import os
 import json
-import socket
 
 import typing as tp
 

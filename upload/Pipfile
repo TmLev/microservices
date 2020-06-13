@@ -7,14 +7,15 @@ verify_ssl = true
 
 [packages]
 django = "*"
-django-filter = "*"
-djangogrpcframework = "*"
 djangorestframework = "*"
-grpcio = "*"
-grpcio-tools = "*"
 markdown = "*"
+django-filter = "*"
+django-q = "*"
+redis = "*"
+grpcio = "*"
 psycopg2 = "*"
-requests = "*"
+grpcio-tools = "*"
+pika = "*"
 
 [requires]
 python_version = "3.8"

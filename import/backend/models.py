@@ -44,10 +44,6 @@ class Product(models.Model):
     def delete_by_id(
         id_: str,
     ) -> None:
-        if id_ == "all":
-            Product.objects.all().delete()
-            return
-
         product: Product = Product.get_by_id(id_)
         product.delete()
         return

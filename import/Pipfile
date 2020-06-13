@@ -8,13 +8,12 @@ verify_ssl = true
 [packages]
 django = "*"
 django-filter = "*"
-djangogrpcframework = "*"
+django-q = "*"
 djangorestframework = "*"
-grpcio = "*"
-grpcio-tools = "*"
 markdown = "*"
+pika = "*"
 psycopg2 = "*"
-requests = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"

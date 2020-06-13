@@ -4,8 +4,8 @@ import pandas as pd
 from lxml import etree as ET
 
 
-def get_clean_items():
-    df = pd.read_csv("raw_amazon_items.csv")
+def get_clean_products():
+    df = pd.read_csv("raw_amazon_products.csv")
 
     df = df.drop(
         columns=[
@@ -32,32 +32,32 @@ def get_clean_items():
 
 
 def save_to_csv(df):
-    df.to_csv("items.csv", index=False)
+    df.to_csv("products.csv", index=False)
 
 
 def save_to_xml(df):
-    items = ET.Element("items")
+    products = ET.Element("products")
 
     for index, row in df.iterrows():
-        item = ET.SubElement(items, "item")
+        product = ET.SubElement(products, "product")
 
-        id_ = ET.SubElement(item, "id")
+        id_ = ET.SubElement(product, "id")
         id_.text = row.id
 
-        title = ET.SubElement(item, "title")
+        title = ET.SubElement(product, "title")
         title.text = row.title
 
-        category = ET.SubElement(item, "category")
+        category = ET.SubElement(product, "category")
         category.text = row.category
 
-    tree = ET.ElementTree(items)
-    tree.write("items.xml", pretty_print=True)
+    tree = ET.ElementTree(products)
+    tree.write("products.xml", pretty_print=True)
 
 
 def main():
-    items = get_clean_items()
-    save_to_csv(items)
-    save_to_xml(items)
+    products = get_clean_products()
+    save_to_csv(products)
+    save_to_xml(products)
 
 
 if __name__ == "__main__":

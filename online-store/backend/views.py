@@ -82,9 +82,8 @@ class ProductView(APIView):
         if not profile.has_valid_token:
             return INVALID_CREDENTIALS
 
-        id_from_query: str = request.query_params.get("id")
+        id_: str = request.query_params.get("id")
         try:
-            id_: int = int(id_from_query)
             product: Product = Product.get_by_id(id_)
         except (ValueError, TypeError, Product.DoesNotExist):
             return PRODUCT_NOT_FOUND
@@ -114,9 +113,8 @@ class ProductView(APIView):
         if not profile.has_valid_token or profile.role != Admin:
             return INVALID_CREDENTIALS
 
-        id_from_query: str = request.data.get("id")
+        id_: str = request.data.get("id")
         try:
-            id_: int = int(id_from_query)
             product: Product = Product.get_by_id(id_)
         except (ValueError, TypeError, Product.DoesNotExist):
             return PRODUCT_NOT_FOUND
@@ -191,9 +189,8 @@ class ProductView(APIView):
         if not profile.has_valid_token or profile.role != Admin:
             return INVALID_CREDENTIALS
 
-        id_from_query: str = request.data.get("id")
+        id_: str = request.query_params.get("id")
         try:
-            id_: int = int(id_from_query)
             Product.delete_by_id(id_)
         except (TypeError, ValueError, Product.DoesNotExist):
             return PRODUCT_NOT_FOUND
