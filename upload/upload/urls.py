@@ -16,6 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from backend.views import ProductUpload
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('api/upload', ProductUpload.as_view()),
 ]
