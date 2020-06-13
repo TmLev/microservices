@@ -1,11 +1,12 @@
 # coding=utf-8
 
-import uuid
-
 from django.db import models
 
 
 class Product(models.Model):
+    id = models.TextField(
+        primary_key=True,
+    )
     title = models.TextField(
     )
     category = models.TextField(
@@ -13,7 +14,7 @@ class Product(models.Model):
 
     @staticmethod
     def get_by_id(
-        id_: int,
+        id_: str,
     ) -> 'Product':
         return Product.objects.get(id=id_)
 
@@ -21,7 +22,7 @@ class Product(models.Model):
     def create(
         title: str,
         category: str,
-    ) -> int:
+    ) -> str:
         product: Product = Product(
             title=title,
             category=category,
@@ -31,7 +32,7 @@ class Product(models.Model):
 
     @staticmethod
     def delete_by_id(
-        id_: int,
+        id_: str,
     ) -> None:
         product: Product = Product.get_by_id(id_)
         product.delete()
