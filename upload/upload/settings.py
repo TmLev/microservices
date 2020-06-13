@@ -95,7 +95,7 @@ DATABASES = {
 
 Q_CLUSTER = {
     'name':         'upload',
-    'workers':      8,
+    'workers':      3,
     'recycle':      500,
     'timeout':      60,
     'compress':     True,
