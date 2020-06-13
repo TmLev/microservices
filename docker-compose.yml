@@ -6,6 +6,11 @@ services:
     env_file:
       - database/database.env
 
+  redis:
+    image: redis:alpine
+    env_file:
+      - upload/upload.env
+
   mq:
     image: rabbitmq:management-alpine
     env_file:
@@ -50,7 +55,7 @@ services:
     ports:
       - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
     command: >
-      sh -c "utils/wait-for.sh mq:$MQ_PORT -t 0 &&
+      sh -c "utils/wait-for.sh $MQ_HOST:$MQ_PORT -t 0 &&
              ./notifications"
 
   auth:
@@ -66,8 +71,8 @@ services:
       - db
       - mq
     command: >
-      sh -c "utils/wait-for.sh db:$DB_PORT -t 0 &&
-             utils/wait-for.sh mq:$MQ_PORT -t 0 &&
+      sh -c "utils/wait-for.sh $DB_HOST:$DB_PORT -t 0 &&
+             utils/wait-for.sh $MQ_HOST:$MQ_PORT -t 0 &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$AUTH_PORT"
@@ -84,11 +89,13 @@ services:
       dockerfile: auth/Dockerfile
     depends_on:
       - db
+      - auth
     environment:
       - AUTH_GRPC_MODE=1
     # TODO(TmLev): remove --dev after debugging
     command: >
-      sh -c "utils/wait-for.sh db:$DB_PORT -t 0 &&
+      sh -c "utils/wait-for.sh $DB_HOST:$DB_PORT &&
+             utils/wait-for.sh $AUTH_HOST:$AUTH_PORT -t 0 &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py grpcrunserver --dev 0.0.0.0:$AUTH_GRPC_PORT"
@@ -105,12 +112,59 @@ services:
       dockerfile: online-store/Dockerfile
     depends_on:
       - db
-      - auth
       - auth-grpc
     command: >
-      sh -c "utils/wait-for.sh auth:$AUTH_PORT &&
+      sh -c "utils/wait-for.sh $DB_HOST:$DB_PORT &&
+             utils/wait-for.sh $AUTH_GRPC_HOST:$AUTH_GRPC_PORT &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$ONLINE_STORE_PORT"
     ports:
       - ${ONLINE_STORE_PORT}:${ONLINE_STORE_PORT}
+
+  upload:
+    env_file:
+      - .env
+      - database/database.env
+      - upload/upload.env
+    build:
+      context: .
+      dockerfile: upload/Dockerfile
+    depends_on:
+      - db
+      - auth-grpc
+    command: >
+      sh -c "utils/wait-for.sh $DB_HOST:$DB_PORT &&
+             utils/wait-for.sh $AUTH_GRPC_HOST:$AUTH_GRPC_PORT &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:$UPLOAD_PORT"
+    ports:
+      - ${UPLOAD_PORT}:${UPLOAD_PORT}
+    volumes:
+      - ./upload/files:/tmp/files
+
+  upload-q-cluster:
+    env_file:
+      - .env
+      - database/database.env
+      - upload/upload.env
+      - import/import.env
+    build:
+      context: .
+      dockerfile: upload/Dockerfile
+    depends_on:
+      - db
+      - redis
+      - mq
+    command: >
+      sh -c "utils/wait-for.sh $DB_HOST:$DB_PORT &&
+             utils/wait-for.sh $REDIS_HOST:$REDIS_PORT &&
+             utils/wait-for.sh $MQ_HOST:$MQ_PORT &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py qcluster"
+    ports:
+      - ${UPLOAD_Q_CLUSTER_PORT}:${UPLOAD_Q_CLUSTER_PORT}
+    volumes:
+      - ./upload/files:/tmp/files
