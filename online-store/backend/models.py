@@ -1,5 +1,7 @@
 # coding=utf-8
 
+import hashlib
+
 from django.db import models
 
 
@@ -22,18 +24,30 @@ class Product(models.Model):
     def create(
         title: str,
         category: str,
+        id_: str = "",
     ) -> str:
+        hash_ = id_ or hashlib.blake2s(
+            data=(title + category).encode(),
+        ).hexdigest()
+
         product: Product = Product(
+            id=hash_,
             title=title,
             category=category,
         )
+
         product.save()
+
         return product.id
 
     @staticmethod
     def delete_by_id(
         id_: str,
     ) -> None:
+        if id_ == "all":
+            Product.objects.all().delete()
+            return
+
         product: Product = Product.get_by_id(id_)
         product.delete()
         return
