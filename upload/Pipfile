@@ -10,6 +10,12 @@ django = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+django-q = "*"
+redis = "*"
+grpcio = "*"
+psycopg2 = "*"
+grpcio-tools = "*"
+pika = "*"
 
 [requires]
 python_version = "3.8"
