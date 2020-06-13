@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+# side-effect: tasks scheduling
+import backend.tasks
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
